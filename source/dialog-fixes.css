@@ -1,0 +1,162 @@
+/* Dialog Fixes for CloneSync UI */
+
+/* Dialog background */
+.DialogContent,
+.DialogOverlay,
+[role="dialog"] > div,
+div[data-state="open"] {
+  background-color: #2e1065 !important; /* Dark purple background for consistent theme */
+  color: white !important;
+  border: 2px solid #7c3aed !important; /* Thick purple border */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(124, 58, 237, 0.4) !important; /* Shadow with purple glow */
+  border-radius: 12px !important;
+}
+
+/* Dialog headers */
+.DialogTitle,
+.DialogHeader h2,
+.DialogHeader h3,
+[role="dialog"] h2,
+[role="dialog"] h3 {
+  color: #f0f0ff !important; /* Bright white */
+  font-weight: 700 !important;
+  font-size: 1.5rem !important;
+  text-shadow: 0 0 10px rgba(124, 58, 237, 0.5) !important; /* Text glow for headers */
+  margin-bottom: 8px !important;
+  border-bottom: 2px solid rgba(124, 58, 237, 0.5) !important;
+  padding-bottom: 8px !important;
+}
+
+/* Dialog descriptions */
+.DialogDescription,
+.DialogContent p,
+[role="dialog"] p {
+  color: #d8b4fe !important; /* Bright purple for secondary text */
+  font-size: 1rem !important;
+  font-weight: 500 !important;
+  margin-bottom: 12px !important;
+}
+
+/* Form controls in dialogs */
+.DialogContent input,
+.DialogContent select,
+.DialogContent textarea,
+[role="dialog"] input,
+[role="dialog"] select,
+[role="dialog"] textarea {
+  background-color: #4c1d95 !important; /* Medium purple background */
+  color: white !important;
+  border: 2px solid #8b5cf6 !important; /* Bright purple border */
+  border-radius: 8px !important;
+  padding: 10px !important;
+  font-size: 1rem !important;
+  transition: all 0.2s ease !important;
+}
+
+.DialogContent input:focus,
+.DialogContent select:focus,
+.DialogContent textarea:focus,
+[role="dialog"] input:focus,
+[role="dialog"] select:focus,
+[role="dialog"] textarea:focus {
+  border-color: #a78bfa !important; /* Lighter purple for focus */
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.5) !important;
+  transform: translateY(-1px) !important; /* Slight lift effect */
+}
+
+/* Radio and checkbox elements */
+.RadioGroupItem, 
+.CheckboxItem,
+input[type="radio"],
+input[type="checkbox"] {
+  background-color: transparent !important;
+  border: 2px solid #8b5cf6 !important; /* Bright purple border */
+  width: 22px !important; 
+  height: 22px !important;
+}
+
+/* Checked states */
+.RadioGroupItem[data-state="checked"],
+input[type="radio"]:checked,
+.CheckboxItem[data-state="checked"],
+input[type="checkbox"]:checked {
+  background-color: #8b5cf6 !important; /* Bright purple for checked state */
+  border-color: #c4b5fd !important; /* Light purple border */
+  box-shadow: 0 0 5px rgba(139, 92, 246, 0.5) !important; /* Glow effect */
+}
+
+/* Labels in dialogs */
+.DialogContent label,
+[role="dialog"] label {
+  color: #f0f0ff !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  margin-bottom: 6px !important;
+  display: block !important;
+}
+
+/* Buttons in dialogs */
+.DialogFooter button,
+[role="dialog"] button {
+  background-color: #7c3aed !important; /* Purple background */
+  color: white !important;
+  border: none !important;
+  font-weight: 600 !important;
+  padding: 10px 20px !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+}
+
+.DialogFooter button:hover,
+[role="dialog"] button:hover {
+  background-color: #6d28d9 !important; /* Darker purple on hover */
+  transform: translateY(-2px) !important;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2) !important;
+}
+
+.DialogFooter button:active,
+[role="dialog"] button:active {
+  transform: translateY(0) !important;
+}
+
+/* Cancel button styling */
+.DialogFooter button[variant="outline"],
+[role="dialog"] button[variant="outline"],
+.DialogFooter button:first-child,
+[role="dialog"] button:first-child {
+  background-color: transparent !important;
+  border: 2px solid #7c3aed !important;
+  color: #d8b4fe !important;
+}
+
+.DialogFooter button[variant="outline"]:hover,
+[role="dialog"] button[variant="outline"]:hover,
+.DialogFooter button:first-child:hover,
+[role="dialog"] button:first-child:hover {
+  background-color: rgba(124, 58, 237, 0.2) !important;
+}
+
+/* Specific fixes for algorithm selection */
+div[class*="lipsync-algorithm"] div,
+div[class*="algorithm-selection"] div,
+div[data-setting="algorithm"] div {
+  color: white !important;
+  padding: 3px !important;
+}
+
+.flex.items-start.space-x-2.p-2.rounded-md {
+  border: 1px solid rgba(139, 92, 246, 0.3) !important;
+  margin: 4px 0 !important;
+  border-radius: 8px !important;
+}
+
+.flex.items-start.space-x-2.p-2.rounded-md.hover\:bg-slate-100:hover,
+.flex.items-start.space-x-2.p-2.rounded-md.hover\:bg-slate-700:hover,
+.flex.items-start.space-x-2.p-2.rounded-md:hover {
+  background-color: rgba(124, 58, 237, 0.3) !important; /* More visible hover state */
+  transform: translateX(3px) !important;
+  border-color: #8b5cf6 !important;
+} 

@@ -1,0 +1,138 @@
+/* Menu Fixes for CloneSync UI */
+
+/* Basic fixes for navigation menus and dropdown colors */
+.NavigationMenuTrigger,
+.MenubarTrigger,
+.DropdownMenuTrigger {
+  background-color: rgba(124, 58, 237, 0.8) !important; /* Stronger purple background */
+  color: white !important;
+  border: 2px solid rgba(196, 181, 253, 0.6) !important; /* Light purple border for contrast */
+  font-weight: 600 !important;
+}
+
+.NavigationMenuTrigger:hover,
+.MenubarTrigger:hover,
+.DropdownMenuTrigger:hover {
+  background-color: rgba(109, 40, 217, 0.9) !important; /* Darker on hover for better feedback */
+  border-color: rgba(216, 180, 254, 0.8) !important; /* Brighter border on hover */
+}
+
+/* Menu content background and text colors */
+.NavigationMenuContent,
+.MenubarContent,
+.DropdownMenuContent,
+.MenuContent,
+.PopoverContent,
+[data-radix-popper-content-wrapper] > div {
+  background-color: #2e1065 !important; /* Darker purple background for menus */
+  color: #ffffff !important;
+  border: 2px solid #7c3aed !important; /* Solid purple border */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 10px rgba(124, 58, 237, 0.3) !important; /* Shadow with purple glow */
+}
+
+/* Menu items */
+.NavigationMenuContent *,
+.MenubarContent *,
+.DropdownMenuContent * {
+  color: white !important;
+}
+
+/* Menu headers and titles */
+.NavigationMenuContent h1,
+.NavigationMenuContent h2,
+.NavigationMenuContent h3,
+.NavigationMenuContent h4,
+.NavigationMenuContent h5,
+.NavigationMenuContent h6,
+.MenubarContent h1,
+.MenubarContent h2,
+.MenubarContent h3,
+.MenubarContent h4,
+.MenubarContent h5,
+.MenubarContent h6,
+.DropdownMenuContent h1,
+.DropdownMenuContent h2,
+.DropdownMenuContent h3,
+.DropdownMenuContent h4,
+.DropdownMenuContent h5,
+.DropdownMenuContent h6 {
+  color: #f0f0ff !important; /* Brighter white for headers */
+  font-weight: 600 !important;
+  text-shadow: 0 0 5px rgba(124, 58, 237, 0.5) !important; /* Text glow for headers */
+}
+
+/* Menu item hover states */
+.NavigationMenuContent div[class*="hover:bg"],
+.MenubarContent div[class*="hover:bg"],
+.DropdownMenuContent div[class*="hover:bg"],
+.cursor-pointer.flex.items-center.space-x-2.rounded-md.p-2.hover\:bg-slate-700,
+.flex.items-center.space-x-2.rounded-md.p-2.hover\:bg-slate-100 {
+  border-radius: 6px !important;
+  margin: 2px 0 !important;
+  background-color: rgba(91, 33, 182, 0.4) !important; /* Slightly visible background */
+  transition: all 0.2s ease !important;
+}
+
+.NavigationMenuContent div[class*="hover:bg"]:hover,
+.MenubarContent div[class*="hover:bg"]:hover,
+.DropdownMenuContent div[class*="hover:bg"]:hover,
+.cursor-pointer.flex.items-center.space-x-2.rounded-md.p-2:hover,
+.flex.items-center.space-x-2.rounded-md.p-2:hover {
+  background-color: rgba(124, 58, 237, 0.6) !important; /* Brighter purple for hover */
+  transform: translateX(3px) !important; /* Slight movement on hover */
+  box-shadow: -2px 0 0 #a855f7 !important; /* Left border indicator */
+}
+
+/* Menu item text colors */
+.NavigationMenuContent .text-white,
+.MenubarContent .text-white,
+.DropdownMenuContent .text-white,
+.MenuContent .text-white,
+.cursor-pointer .text-white,
+.flex.items-center .text-white {
+  color: #ffffff !important;
+  font-weight: 500 !important;
+}
+
+.NavigationMenuContent .text-sm,
+.MenubarContent .text-sm,
+.DropdownMenuContent .text-sm,
+.MenuContent .text-sm {
+  color: #ffffff !important;
+}
+
+/* Secondary text in menus */
+.NavigationMenuContent .text-xs.text-gray-300,
+.NavigationMenuContent .text-xs.text-slate-400,
+.NavigationMenuContent .text-xs.text-slate-500,
+.MenubarContent .text-xs.text-gray-300,
+.MenubarContent .text-xs.text-slate-400,
+.MenubarContent .text-xs.text-slate-500,
+.DropdownMenuContent .text-xs.text-gray-300,
+.DropdownMenuContent .text-xs.text-slate-400,
+.DropdownMenuContent .text-xs.text-slate-500,
+.cursor-pointer .text-xs.text-gray-300,
+.cursor-pointer .text-xs.text-slate-400,
+.cursor-pointer .text-xs.text-slate-500 {
+  color: #d8b4fe !important; /* Much brighter purple for secondary text */
+  opacity: 0.95 !important; /* Slightly less opacity for visual hierarchy */
+}
+
+/* Icon colors in menus */
+.NavigationMenuContent svg,
+.MenubarContent svg,
+.DropdownMenuContent svg,
+.cursor-pointer svg {
+  color: #d8b4fe !important; /* Bright purple for icons */
+  fill: none !important;
+  stroke-width: 2px !important;
+}
+
+/* Ensure dividers are visible */
+.NavigationMenuContent .border-t,
+.MenubarContent .border-t,
+.DropdownMenuContent .border-t {
+  border-color: rgba(168, 85, 247, 0.7) !important; /* Brighter purple dividers */
+  border-width: 2px !important;
+  margin: 8px 0 !important;
+} 

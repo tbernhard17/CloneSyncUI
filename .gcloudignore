@@ -1,0 +1,28 @@
+# Exclude node modules (will be installed during build)
+node_modules/
+
+# Exclude git files
+.git/
+.gitignore
+
+# Exclude build artifacts
+dist/
+*.log
+
+# Exclude development files
+.env.local
+.env.development
+*.md
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# Exclude editor configs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Exclude env folder if it exists
+env/ 
