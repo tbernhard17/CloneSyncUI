@@ -3,6 +3,7 @@ import "./App.css";
 
 // Import your main components directly
 import { SettingsProvider } from "./context/SettingsContext";
+import { EngineProvider } from "./context/EngineContext";
 import LipsyncUploader from "./components/LipsyncUploader";
 
 // ErrorBoundary component to catch and display rendering errors
@@ -144,9 +145,11 @@ const MainContent = () => {
 function App() {
   return (
     <ErrorBoundary>
-      <SettingsProvider>
-        <MainContent />
-      </SettingsProvider>
+      <EngineProvider>
+        <SettingsProvider>
+          <MainContent />
+        </SettingsProvider>
+      </EngineProvider>
     </ErrorBoundary>
   );
 }
