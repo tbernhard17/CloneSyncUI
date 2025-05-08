@@ -86,15 +86,15 @@ export async function uploadFile(
       error: UPLOAD_ERROR_CODES.FILE_TOO_LARGE,
       message: 'File exceeds maximum allowed size'
     });
-  }
-  // Use chunked upload for large files
+  }  // Use chunked upload for large files
   if (file.size > CHUNK_THRESHOLD) {
-    try {      // 1. INIT
-      // Import the fetchWithCORS function
-      const { fetchWithCORS } = await import('./runpodUtils');
+    try {      
+      // 1. INIT
+      // Import the runpodFetch function for production use
+      const { runpodFetch } = await import('./runpodUtils');
       
-      // Use CORS-aware fetch for production or standard fetch for local development
-      const fetchFunction = isProduction ? fetchWithCORS : fetch;
+      // Use RunPod-aware fetch for production or standard fetch for local development
+      const fetchFunction = isProduction ? runpodFetch : fetch;
       
       // Log which endpoint we're using
       console.log(`Uploading to endpoint: ${getApiUrl('/api/v1/upload/init')}`);
@@ -188,7 +188,6 @@ export async function uploadFile(
   if (!uploadEndpoint) {
     throw new Error('No upload endpoint specified or inferred.');
   }
-
   const formData = new FormData();
   formData.append('file', file);
 
@@ -197,6 +196,49 @@ export async function uploadFile(
   console.log('[uploadFile] File:', file.name, 'Type:', file.type, 'Size:', file.size);
   console.log('[uploadFile] FormData keys:', Array.from(formData.keys()));
 
+  // For production with RunPod, we need to handle the upload differently
+  if (isProduction) {
+    try {
+      // Use the adapters for RunPod API
+      const { encodeFileForRunPod, runpodFetch } = await import('./runpodUtils');
+      
+      // Encode the file for RunPod
+      const fileData = await encodeFileForRunPod(file);
+      console.log('[uploadFile] File encoded for RunPod:', fileData.file_name);
+      
+      // Create a payload that matches what the handler.py expects
+      const payload = {
+        file_data: fileData.file_data,
+        file_name: fileData.file_name,
+        content_type: fileData.content_type,
+        is_base64: true
+      };
+      
+      // Use runpodFetch to handle the request
+      const response = await runpodFetch(uploadEndpoint, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Upload failed with status ${response.status}: ${text}`);
+      }
+      
+      const result = await response.json();
+      
+      if (progressCb) progressCb(100);
+      return result;
+    } catch (error) {
+      console.error('[uploadFile] RunPod upload error:', error);
+      throw error;
+    }
+  }
+  
+  // Standard XHR upload for non-RunPod environments
   try {
     const xhr = new XMLHttpRequest();
     const uploadPromise = new Promise<UploadResponse>((resolve, reject) => {

@@ -143,27 +143,42 @@ export const adaptFetchForRunPod = async (
   // Extract the path without the API prefix
   const path = url.replace(/^(?:https?:\/\/[^/]+)?(?:\/api\/v1)?/i, '');
   
-  // Create RunPod payload
+  // Create proper RunPod input format
+  // The RunPod handler expects:
+  // {
+  //   "input": {
+  //     "endpoint": "/some/path",
+  //     "method": "POST",
+  //     "payload": { ... }
+  //   }
+  // }
+  
+  // Prepare the input object expected by RunPod serverless
   const runpodPayload: any = {
-    endpoint: path,
-    method: options.method || 'GET'
+    input: {
+      endpoint: path,
+      method: options.method || 'GET'
+    }
   };
   
   if (options.body) {
     if (options.body instanceof FormData) {
       // Handle FormData (file uploads)
-      runpodPayload.payload = await adaptFormDataForRunPod(options.body);
+      runpodPayload.input.payload = await adaptFormDataForRunPod(options.body);
     } else if (typeof options.body === 'string') {
       // Handle JSON strings
       try {
-        runpodPayload.payload = JSON.parse(options.body);
+        runpodPayload.input.payload = JSON.parse(options.body);
       } catch (e) {
-        runpodPayload.payload = { data: options.body };
+        runpodPayload.input.payload = { data: options.body };
       }
     } else {
       // Handle other body types
-      runpodPayload.payload = options.body;
+      runpodPayload.input.payload = options.body;
     }
+  } else {
+    // Always include a payload, even if empty
+    runpodPayload.input.payload = {};
   }
     // Create new options for RunPod API with proper headers
   const adaptedOptions: RequestInit = {

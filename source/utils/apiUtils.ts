@@ -44,7 +44,7 @@ export const getApiUrl = (endpoint: string): string => {
   }
   
   if (!isLocalDevelopment) {
-    // For production: use RunPod API URL with specific path handling
+    // For production: use RunPod API with uniform approach
     // If the path has /api/v1, remove it to avoid double-prefixing
     if (normalizedEndpoint.startsWith('/api/v1')) {
       normalizedEndpoint = normalizedEndpoint.substring('/api/v1'.length);
@@ -54,29 +54,13 @@ export const getApiUrl = (endpoint: string): string => {
       }
     }
     
-    // Special case handling for file uploads and other direct paths
-    const isFileUpload = normalizedEndpoint.includes('/upload/');
-    const isLipSyncEngine = normalizedEndpoint.includes('/lip_sync/engine/');
+    // For RunPod serverless, always use the /run endpoint
+    // All API routing is handled via the input.endpoint in the payload
+    const handlerEndpoint = `/run`;
+    console.log(`Using RunPod API: ${RUNPOD_API_URL}${handlerEndpoint} for ${normalizedEndpoint}`);
     
-    // For file uploads, don't use the /run endpoint
-    if (isFileUpload) {
-      console.log(`Using RunPod file upload API: ${RUNPOD_API_URL}${normalizedEndpoint}`);
-      return `${RUNPOD_API_URL}${normalizedEndpoint}`;
-    } 
-    // For lip sync engine endpoints, use direct path
-    else if (isLipSyncEngine) {
-      console.log(`Using RunPod lip sync engine API: ${RUNPOD_API_URL}${normalizedEndpoint}`);
-      return `${RUNPOD_API_URL}${normalizedEndpoint}`;
-    } 
-    // For most other endpoints, use the RunPod handler pattern
-    else {
-      // Use input/endpoint pattern required by RunPod handler
-      const handlerEndpoint = `/run`;
-      console.log(`Using RunPod handler API: ${RUNPOD_API_URL}${handlerEndpoint} for ${normalizedEndpoint}`);
-      
-      // Return the base URL - the actual path will be handled in the payload by runpodFetch
-      return `${RUNPOD_API_URL}${handlerEndpoint}`;
-    }
+    // The actual endpoint will be included in the payload by runpodFetch
+    return `${RUNPOD_API_URL}${handlerEndpoint}`;
   } else {
     // For local development: ensure we have the API prefix
     // If endpoint doesn't start with API prefix, add it
