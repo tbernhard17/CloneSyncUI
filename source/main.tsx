@@ -1,5 +1,3 @@
-
-
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 
@@ -18,8 +16,6 @@ const rootElement = document.getElementById("root");
 // Ensure the root element exists before trying to render
 if (rootElement) {
   createRoot(rootElement).render(
-    // Wrap your main App component with the TooltipProvider
-    // This makes the tooltip functionality available to all components inside App
     <TooltipProvider>
       <App />
     </TooltipProvider>
