@@ -1,6 +1,8 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
+import tailwindcss from 'tailwindcss';
+import autoprefixer from 'autoprefixer';
 
 // Component tagger function
 function componentTagger() {
@@ -143,8 +145,8 @@ export default defineConfig(({ mode }) => {
       // Process all CSS with PostCSS
       postcss: {
         plugins: [
-          require('tailwindcss'),
-          require('autoprefixer'),
+          tailwindcss,
+          autoprefixer,
         ],
       },
       // Ensure CSS modules work correctly
