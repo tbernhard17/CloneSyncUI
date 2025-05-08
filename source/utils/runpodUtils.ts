@@ -9,6 +9,53 @@ const isProduction = window.location.hostname !== 'localhost' &&
                   window.location.hostname !== '127.0.0.1';
 
 /**
+ * Generate CORS-friendly headers for all API requests
+ * Avoids problematic headers that can trigger CORS preflight issues
+ */
+export const corsHeaders = (): HeadersInit => {
+  return {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Origin': window.location.origin
+  };
+};
+
+/**
+ * Create a custom fetch function that handles CORS properly for RunPod API
+ * Use this for direct requests to RunPod endpoints
+ */
+export const fetchWithCORS = async (url: string, options: RequestInit = {}): Promise<Response> => {
+  // Start with merged headers
+  const mergedHeaders = new Headers(options.headers);
+  
+  // Add our CORS headers
+  Object.entries(corsHeaders()).forEach(([key, value]) => {
+    mergedHeaders.set(key, value);
+  });
+  
+  // Remove problematic headers that might cause CORS issues
+  mergedHeaders.delete('Cache-Control');
+  mergedHeaders.delete('Pragma');
+  
+  // Configure fetch options with CORS mode
+  const corsOptions: RequestInit = {
+    ...options,
+    mode: 'cors',
+    credentials: 'omit', // Don't send cookies to avoid CORS issues 
+    headers: mergedHeaders
+  };
+  
+  console.log(`CORS fetch for: ${url}`);
+  
+  try {
+    return await fetch(url, corsOptions);
+  } catch (error) {
+    console.error('CORS fetch error:', error);
+    throw error;
+  }
+};
+
+/**
  * Helper function to adapt file data for RunPod's serverless API
  * In RunPod, file uploads need to be encoded in a specific format
  * 
@@ -118,19 +165,30 @@ export const adaptFetchForRunPod = async (
       runpodPayload.payload = options.body;
     }
   }
-  
-  // Create new options for RunPod API
+    // Create new options for RunPod API with proper headers
   const adaptedOptions: RequestInit = {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Origin': window.location.origin,
+      // Remove problematic headers that cause CORS issues
+      'Cache-Control': undefined,
+      'Pragma': undefined
     },
+    mode: 'cors', // Explicitly set CORS mode
+    credentials: 'omit', // Don't send cookies to avoid CORS issues
     body: JSON.stringify(runpodPayload)
   };
   
   // Use RunPod base URL
   const baseUrl = 'https://api.runpod.ai/v2/fk5lwqqdbcmom5';
-  const adaptedUrl = `${baseUrl}/run`;
+  // For direct API access endpoints like upload, use direct path instead of /run
+  const adaptedUrl = path.includes('/upload/') ? 
+    `${baseUrl}${path}` : // Direct path for file uploads 
+    `${baseUrl}/run`;     // Standard endpoint for normal operations
+  
+  console.log('RunPod adapted request:', { adaptedUrl, method: adaptedOptions.method });
   
   return { adaptedUrl, adaptedOptions };
 };
@@ -147,8 +205,40 @@ export const runpodFetch = async (
   url: string,
   options: RequestInit = {}
 ): Promise<Response> => {
-  const { adaptedUrl, adaptedOptions } = await adaptFetchForRunPod(url, options);
-  return fetch(adaptedUrl, adaptedOptions);
+  try {
+    console.log(`RunPod fetch for URL: ${url}`);
+    const { adaptedUrl, adaptedOptions } = await adaptFetchForRunPod(url, options);
+    
+    // Add retry logic for network errors
+    const MAX_RETRIES = 3;
+    let retryCount = 0;
+    let lastError = null;
+    
+    while (retryCount < MAX_RETRIES) {
+      try {
+        const response = await fetch(adaptedUrl, adaptedOptions);
+        
+        // Log response status for debugging
+        console.log(`RunPod response status: ${response.status} for ${adaptedUrl}`);
+        
+        if (!response.ok && (response.status === 401 || response.status === 403)) {
+          console.error('Authentication error with RunPod API. Check API key configuration.');
+        }
+        
+        return response;
+      } catch (error) {
+        lastError = error;
+        retryCount++;
+        console.warn(`RunPod fetch retry ${retryCount}/${MAX_RETRIES} after error:`, error);
+        await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
+      }
+    }
+    
+    throw lastError || new Error('Failed to fetch after multiple retries');
+  } catch (error) {
+    console.error('Error in runpodFetch:', error);
+    throw error;
+  }
 };
 
 /**

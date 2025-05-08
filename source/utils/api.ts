@@ -87,11 +87,18 @@ export async function uploadFile(
       message: 'File exceeds maximum allowed size'
     });
   }
-
   // Use chunked upload for large files
   if (file.size > CHUNK_THRESHOLD) {
     try {      // 1. INIT
-      const fetchFunction = isProduction ? runpodFetch : fetch;
+      // Import the fetchWithCORS function
+      const { fetchWithCORS } = await import('./runpodUtils');
+      
+      // Use CORS-aware fetch for production or standard fetch for local development
+      const fetchFunction = isProduction ? fetchWithCORS : fetch;
+      
+      // Log which endpoint we're using
+      console.log(`Uploading to endpoint: ${getApiUrl('/api/v1/upload/init')}`);
+      
       const initRes = await fetchFunction(getApiUrl('/api/v1/upload/init'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -116,8 +123,12 @@ export async function uploadFile(
         const formData = new FormData();
         formData.append('upload_id', upload_id);
         formData.append('chunk_index', i.toString());
-        formData.append('total_chunks', totalChunks.toString());
-        formData.append('chunk', chunk, file.name);        const chunkRes = await fetchFunction(getApiUrl('/api/v1/upload/chunk'), {
+        formData.append('total_chunks', totalChunks.toString());        formData.append('chunk', chunk, file.name);        
+        
+        // Log chunk upload progress
+        console.log(`Uploading chunk ${i+1}/${totalChunks} for file ${file.name}`);
+        
+        const chunkRes = await fetchFunction(getApiUrl('/api/v1/upload/chunk'), {
           method: 'POST',
           body: formData
         });
@@ -129,7 +140,11 @@ export async function uploadFile(
         if (progressCb) {
           progressCb(Math.round((uploaded / file.size) * 100));
         }
-      }      // 3. FINALIZE
+      }      
+      
+      // 3. FINALIZE
+      console.log(`Finalizing upload for ${file.name} with ID: ${upload_id}`);
+      
       const finalizeRes = await fetchFunction(getApiUrl('/api/v1/upload/finalize'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
