@@ -104,7 +104,7 @@ export default defineConfig(({ mode }) => {
           drop_debugger: !isDev,
         },
       },
-      cssCodeSplit: true,
+      cssCodeSplit: false, // Ensure all CSS is bundled into one file
       assetsInlineLimit: 4096,
       rollupOptions: {
         output: {
@@ -138,6 +138,19 @@ export default defineConfig(({ mode }) => {
           }
         }
       }
+    },
+    css: {
+      // Process all CSS with PostCSS
+      postcss: {
+        plugins: [
+          require('tailwindcss'),
+          require('autoprefixer'),
+        ],
+      },
+      // Ensure CSS modules work correctly
+      modules: {
+        scopeBehaviour: 'global'
+      },
     },
     base: './'
   };
