@@ -17,6 +17,8 @@ body {
   display: block !important;
   overflow-x: hidden;
   overflow-y: auto;
+  background: linear-gradient(180deg, #09090b 0%, #1a1a2e 100%);
+  color: hsl(var(--foreground, 210 40% 98%));
 }
 
 /* Force dark mode for all Bootstrap and React components */
@@ -210,7 +212,8 @@ button[data-lipsync="true"],
   }
 
   body {
-    @apply bg-background text-foreground;
+    background: linear-gradient(180deg, #09090b 0%, #1a1a2e 100%);
+    color: hsl(var(--foreground, 210 40% 98%));
   }
 }
 
