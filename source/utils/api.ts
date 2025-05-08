@@ -473,11 +473,19 @@ export async function updateLipsyncEngine(engine: string): Promise<any> {
  * @returns Promise with the download URL or null if not available
  */
 export async function getDownloadUrl(taskId: string): Promise<string | null> {
+  // --- PATCH: Always return absolute URLs to RunPod backend for media files ---
+  // You may want to move RUNPOD_API_URL to a shared config if not already
+  const RUNPOD_API_URL = 'https://api.runpod.ai/v2/fk5lwqqdbcmom5';
+
   try {
     const { data } = await api.get(`${API_VERSION}/tasks/${taskId}`);
     
     if (data.status === 'completed' && data.data && data.data.output_url) {
-      return data.data.output_url;
+      // If already absolute, return as is; otherwise, prefix with backend
+      if (/^https?:\/\//.test(data.data.output_url)) {
+        return data.data.output_url;
+      }
+      return `${RUNPOD_API_URL}${data.data.output_url}`;
     }
     
     return null;
@@ -503,10 +511,11 @@ export async function getDownloadUrl(taskId: string): Promise<string | null> {
       // If the file exists in a different known location, we can redirect there
       // For tasks that might be creating lipsync results, look in the right folder
       if (taskId.includes('lipSyncTask')) {
-        return `/media/outputs/lipsync/${fileId}.mp4`;
+        return `${RUNPOD_API_URL}/media/outputs/lipsync/${fileId}.mp4`;
       }
       
-      return mockUrl;
+      // Always return absolute URL for mock as well
+      return `${RUNPOD_API_URL}${mockUrl}`;
     }
     
     return null;
