@@ -178,7 +178,7 @@ button[data-lipsync="true"],
   }
 
   * {
-    @apply border-border;
+    border-color: var(--border);
   }
 
   /* Standard cursor styling */
