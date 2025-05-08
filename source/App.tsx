@@ -1,12 +1,23 @@
-
 import React from "react";
-import LipsyncUploader from "./components/LipsyncUploader";
+import "./App.css";
+import Header from "./components/Header";
+import Sidebar from "./components/Sidebar";
+import VideoPlayer from "./components/VideoPlayer";
+import { SettingsProvider } from "./context/SettingsContext";
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-8">
-      <LipsyncUploader />
-    </div>
+    <SettingsProvider>
+      <div className="app-container">
+        <Sidebar />
+        <div className="flex flex-col flex-1">
+          <Header />
+          <main className="flex-1 p-4 overflow-auto">
+            <VideoPlayer />
+          </main>
+        </div>
+      </div>
+    </SettingsProvider>
   );
 }
 

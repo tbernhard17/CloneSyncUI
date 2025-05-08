@@ -1,8 +1,24 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  overflow-x: hidden;
+  background: linear-gradient(180deg, #09090b 0%, #1a1a2e 100%);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: linear-gradient(180deg, #09090b 0%, #1a1a2e 100%);
+}
+
+.app-container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
 }
 
 .logo {
@@ -18,6 +34,7 @@
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
+/* Preserve any existing animations you might need */
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);
