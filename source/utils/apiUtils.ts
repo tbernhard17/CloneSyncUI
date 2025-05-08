@@ -2,8 +2,11 @@
  * api-utils.ts
  * 
  * Utility functions for API communication between frontend and backend
- * when deployed on the same Cloud Run domain.
+ * with support for external RunPod API deployment.
  */
+
+// RunPod API URL - Production backend endpoint
+const RUNPOD_API_URL = 'https://api.runpod.ai/v2/fk5lwqqdbcmom5';
 
 /**
  * Configuration for API endpoints
@@ -22,7 +25,7 @@ export const API_CONFIG = {
 
 /**
  * Gets the appropriate URL for an API endpoint
- * Always uses relative URLs when on the same domain to avoid CORS issues
+ * Uses RunPod API URL when deployed, falls back to relative URLs for local development
  * 
  * @param endpoint - The API endpoint path
  * @returns The complete URL for the endpoint
@@ -31,9 +34,76 @@ export const getApiUrl = (endpoint: string): string => {
   // Ensure endpoint has leading slash
   const formattedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
   
-  // Always use relative URL format when on Cloud Run
-  // This ensures requests stay within the same domain without CORS
-  return `${API_CONFIG.fullPath}${formattedEndpoint}`;
+  // Use environment-specific URL construction
+  const isLocalDevelopment = window.location.hostname === 'localhost' || 
+                            window.location.hostname === '127.0.0.1';
+  
+  if (!isLocalDevelopment) {
+    // For production: use RunPod API URL
+    // Strip any API prefixes that might conflict with RunPod's routing
+    const cleanEndpoint = formattedEndpoint.replace(/^\/api\/v1/, '');
+    console.log(`Using RunPod API: ${RUNPOD_API_URL}${cleanEndpoint}`);
+    return `${RUNPOD_API_URL}${cleanEndpoint}`;
+  } else {
+    // For local development: use relative URL
+    console.log(`Using local API: ${API_CONFIG.fullPath}${formattedEndpoint}`);
+    return `${API_CONFIG.fullPath}${formattedEndpoint}`;
+  }
+};
+
+/**
+ * Creates a test function to verify both the API connection 
+ * and specifically the RunPod connection when on production
+ */
+export const testRunPodConnection = async (): Promise<boolean> => {
+  try {
+    // Log connection attempt when running in development
+    const isLocalDevelopment = window.location.hostname === 'localhost' || 
+                             window.location.hostname === '127.0.0.1';
+    if (isLocalDevelopment) {
+      console.log(`Testing RunPod API connection to: ${RUNPOD_API_URL}/health`);
+    }
+    
+    // Create an AbortController for timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+    
+    // Force a direct RunPod API call to verify connection
+    const response = await fetch(`${RUNPOD_API_URL}/health`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      signal: controller.signal
+    });
+    
+    // Clear timeout
+    clearTimeout(timeoutId);
+    
+    if (response.ok) {
+      console.log('RunPod API connection successful!');
+      return true;
+    } else {
+      console.error('RunPod API responded but with an error status:', response.status);
+      
+      // Try to get error details
+      try {
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+      } catch (e) {
+        // Ignore parsing errors
+      }
+      
+      return false;
+    }
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      console.error('RunPod API connection timed out after 5 seconds');
+    } else {
+      console.error('RunPod API connection failed:', error);
+    }
+    return false;
+  }
 };
 
 /**

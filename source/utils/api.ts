@@ -5,6 +5,9 @@ import { getApiUrl } from './apiUtils';
 // API version path - centralized to ensure consistency
 export const API_VERSION = "/api/v1";
 
+// Determine if we're in a production environment
+const isProduction = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+
 // Create an axios instance with default configuration
 const api = axios.create({
   // Use relative URL for baseURL when on the same domain
@@ -12,12 +15,21 @@ const api = axios.create({
   timeout: 60000, // Increased timeout for large uploads (60 seconds)
 });
 
-// Configure axios to use relative URLs with the API_VERSION prefix
+// Configure axios to use the appropriate URL based on environment
 api.interceptors.request.use((config) => {
-  // Ensure the URL starts with the API_VERSION
-  if (config.url && !config.url.startsWith(API_VERSION)) {
-    config.url = `${API_VERSION}${config.url.startsWith('/') ? '' : '/'}${config.url}`;
+  // Get the original URL (before any modifications)
+  const originalUrl = config.url || '';
+  
+  if (isProduction) {
+    // In production: use getApiUrl for RunPod API integration
+    config.url = getApiUrl(originalUrl);
+  } else {
+    // In development: ensure URL starts with API_VERSION
+    if (!originalUrl.startsWith(API_VERSION)) {
+      config.url = `${API_VERSION}${originalUrl.startsWith('/') ? '' : '/'}${originalUrl}`;
+    }
   }
+  
   return config;
 });
 

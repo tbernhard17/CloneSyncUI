@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Settings as SettingsIcon, Video, CloudCog, MonitorPlay, CheckCircle } from "lucide-react";
+import { Settings as SettingsIcon, Video, CloudCog, MonitorPlay, CheckCircle, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,6 +15,8 @@ import EngineInfoCard from "./EngineInfoCard";
 import { EngineType } from "@/context/EngineContext";
 import SadTalkerPanel from "./SadTalkerPanel";
 import GeneFacePanel from "./GeneFacePanel";
+import { RunPodConnectionTest } from "./ui/RunPodConnectionTest";
+import ApiHealthCheck from "./ui/ApiHealthCheck";
 
 const SettingsPanel: React.FC = () => {
   const { lipsyncSettings, voiceSettings, updateLipsyncSettings, updateVoiceSettings } = useSettings();
@@ -54,9 +56,10 @@ const SettingsPanel: React.FC = () => {
         </SheetHeader>
         
         <Tabs defaultValue="lipsync" className="mt-6">
-          <TabsList className="grid grid-cols-2 mb-4">
+          <TabsList className="grid grid-cols-3 mb-4">
             <TabsTrigger value="lipsync">Lip Sync</TabsTrigger>
             <TabsTrigger value="voice">Voice</TabsTrigger>
+            <TabsTrigger value="api">API</TabsTrigger>
           </TabsList>
           
           <TabsContent value="lipsync" className="space-y-6">
@@ -249,6 +252,33 @@ const SettingsPanel: React.FC = () => {
                   onValueChange={([value]) => updateVoiceSettings({ pitchCorrection: value })}
                 />
                 <div className="text-xs text-white mt-1 text-right">{voiceSettings.pitchCorrection > 0 ? `+${voiceSettings.pitchCorrection}` : voiceSettings.pitchCorrection} semitones</div>
+              </div>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="api" className="space-y-6">
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-sm font-medium text-white mb-4">API Connection Status</h3>
+                
+                {/* Include the RunPod connection test component */}
+                <div className="mb-6">
+                  <RunPodConnectionTest />
+                </div>
+                
+                {/* Add local API health check with automatic retries */}
+                <div className="mt-4 bg-black/20 p-4 rounded-lg border border-white/10">
+                  <h4 className="text-sm font-medium text-white mb-2">API Health Monitor</h4>
+                  <p className="text-xs text-gray-300 mb-4">
+                    This component automatically monitors API connectivity and displays errors if the connection fails.
+                  </p>
+                  <ApiHealthCheck 
+                    showErrors={true} 
+                    autoRetry={true} 
+                    retryInterval={15000}
+                    checkRunPod={true}
+                  />
+                </div>
               </div>
             </div>
           </TabsContent>
