@@ -2,13 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Import cursor fix CSS file */
-@import url('./cursor-fix.css');
-/* Import menu fixes CSS file */
-@import url('./menu-fixes.css');
-/* Import dialog fixes CSS file */
-@import url('./dialog-fixes.css');
-
 /* Set global dark theme for the entire application */
 :root {
   color-scheme: dark;
