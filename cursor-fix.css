@@ -1,0 +1,79 @@
+/* CloneSync Cursor Override - Forcefully removes any custom cursors */
+
+/* Global reset - apply to absolutely everything */
+*, *::before, *::after {
+  cursor: default !important;
+}
+
+/* Interactive elements - pointer cursor */
+a, 
+button, 
+input[type="button"], 
+input[type="submit"], 
+input[type="reset"],
+[role="button"],
+[onclick],
+summary,
+.clickable,
+.interactive,
+[class*="cursor-pointer"],
+select,
+option,
+details,
+[aria-haspopup="true"] {
+  cursor: pointer !important;
+}
+
+/* Text input elements - text cursor */
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="tel"],
+input[type="url"],
+input[type="search"],
+input[type="number"],
+textarea,
+[contenteditable="true"],
+[contenteditable="plaintext-only"] {
+  cursor: text !important;
+}
+
+/* Resizable elements - resize cursor */
+textarea,
+[class*="resizable"] {
+  cursor: auto !important;
+  resize: vertical;
+}
+
+/* Specifically targeting known problematic elements */
+.tooltip,
+[class*="tooltip"],
+[data-tooltip],
+[data-lipsync],
+.engine-controls,
+.engine-selector,
+button[data-lipsync="true"] {
+  cursor: pointer !important;
+}
+
+/* Override any possible cursor image styles */
+[style*="cursor:url"],
+[style*="cursor: url"],
+[style*="cursor"],
+[class*="custom-cursor"] {
+  cursor: default !important;
+}
+
+/* Enforce same cursor for lipSync element specifically */
+.lipSync-controls *,
+.engine-controls *,
+.engine-selector * {
+  cursor: pointer !important;
+}
+
+/* Remove all animation and transition effects from cursors */
+* {
+  transition-property: background-color, color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter !important;
+  transition-duration: 0.15s !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+} 

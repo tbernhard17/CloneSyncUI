@@ -1,0 +1,569 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Set global dark theme for the entire application */
+:root {
+  color-scheme: dark;
+}
+
+html, body, #root {
+  background-color: #09090b; /* Darker background for better contrast with menus */
+  color: #f8fafc; /* slate-50 */
+}
+
+/* Apply dark theme to all components */
+body {
+  display: block !important;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* Force dark mode for all Bootstrap and React components */
+body,
+[data-bs-theme="light"],
+.light, 
+.bg-white {
+  --bs-body-color: #f8fafc !important;
+  --bs-body-bg: #020617 !important;
+  --bs-tertiary-bg: #1e293b !important;
+  --bs-tertiary-color: #f8fafc !important;
+  --bs-emphasis-color: #f8fafc !important;
+  --bs-secondary-color: #cbd5e1 !important;
+  
+  /* Force apply dark theme */
+  color-scheme: dark !important;
+  data-bs-theme: dark !important;
+}
+
+/* Override any custom cursor styles that might be creating a black circle */
+body * {
+  cursor: default !important;
+}
+a, 
+button, 
+[role="button"],
+[onclick],
+.clickable,
+.interactive,
+[class*="cursor-pointer"],
+input[type="submit"],
+input[type="button"],
+input[type="reset"],
+input[type="checkbox"],
+input[type="radio"],
+select,
+summary {
+  cursor: pointer !important;
+}
+input[type="text"], 
+input[type="password"], 
+input[type="email"], 
+input[type="search"], 
+input[type="number"],
+input[type="url"],
+input[type="tel"],
+textarea, 
+[contenteditable="true"] {
+  cursor: text !important;
+}
+
+/* Direct mouse fix styles instead of importing from a separate file */
+button, 
+a, 
+[role="button"],
+[onclick],
+.clickable,
+.interactive {
+  will-change: transform;
+  transform: translateZ(0);
+  transition-delay: 0ms !important;
+}
+
+/* Ensure mouse events work reliably */
+.tooltip {
+  pointer-events: auto !important;
+}
+
+/* Fixes for lipSync button specifically */
+button[data-lipsync="true"],
+.engine-controls button,
+.engine-selector button {
+  pointer-events: auto !important;
+  transform: translateZ(0) !important;
+  will-change: transform;
+  /* Adding higher z-index to ensure click events are captured */
+  z-index: 10;
+  position: relative;
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 215 20.2% 65.1%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 85.7% 97.3%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 217.2 32.6% 17.5%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  * {
+    border-color: var(--border);
+  }
+
+  /* Standard cursor styling */
+  body, html {
+    cursor: auto;
+  }
+  
+  /* Default cursor for non-interactive elements */
+  div, span, p, h1, h2, h3, h4, h5, h6, section, main, article {
+    cursor: default;
+  }
+  
+  /* Pointer cursor for interactive elements */
+  a, button, [role="button"], summary, details, select,
+  [type="checkbox"], [type="radio"], [type="submit"], [type="button"],
+  [type="reset"], [type="menu"], .cursor-pointer, [aria-haspopup="true"] {
+    cursor: pointer;
+  }
+
+  /* Text input cursors */
+  input, textarea, [contenteditable="true"], [contenteditable="plaintext-only"] {
+    cursor: text;
+  }
+
+  /* Make sure the resize cursor works for textareas */
+  textarea {
+    cursor: auto;
+    resize: vertical;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Z-index hierarchy for UI elements */
+.NavigationMenuContent {
+  z-index: 50 !important;
+}
+
+.NavigationMenu {
+  position: relative;
+  z-index: 40;
+}
+
+/* Dialogs should appear above other content */
+.Dialog, [role="dialog"], div[data-state="open"] {
+  z-index: 100 !important;
+}
+
+/* Custom CSS fixes for CloneSync UI */
+.sidebar, .left-panel, .side-panel, 
+[class*="sidebar"], [class*="left-panel"], [class*="side-panel"] {
+  background-color: #1a1a2e !important;
+  color: #ffffff !important;
+  height: 100vh !important;
+  position: relative !important;
+}
+
+/* Apply dark background to left panel elements */
+[class*="left"], [class*="sidebar"] {
+  background-color: #1a1a2e !important;
+}
+
+/* Fix button positioning */
+.sidebar button, 
+[class*="sidebar"] button,
+.side-panel button,
+[class*="side-panel"] button {
+  margin-top: 0.75rem !important;
+  position: relative !important;
+  top: auto !important;
+}
+
+/* Add spacing at the top of button container */
+.mt-12 {
+  margin-top: 3rem !important;
+}
+
+/* Fix for menu icons */
+.navigation-menu svg,
+.NavigationMenuTrigger svg,
+button svg {
+  display: inline-block !important;
+  vertical-align: middle !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  height: 1.25rem !important;
+  width: 1.25rem !important;
+}
+
+/* Navigation menu styling fixes */
+.NavigationMenuTrigger {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  padding: 0.5rem 0.75rem !important;
+  line-height: 1 !important;
+}
+
+/* Fix for Lucide icons */
+svg[data-lucide],
+svg.lucide,
+svg.lucide-react {
+  display: inline-block !important;
+  vertical-align: middle !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 2 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+/* Fix for dropdown menus */
+.NavigationMenuContent,
+.MenubarContent,
+.DropdownMenuContent {
+  background-color: #1e293b !important; /* slate-800 */
+  color: #f8fafc !important; /* slate-50 */
+  border-color: #334155 !important; /* slate-700 */
+}
+
+/* Fix content styling inside dropdowns */
+.NavigationMenuContent h1, .NavigationMenuContent h2, .NavigationMenuContent h3,
+.NavigationMenuContent h4, .NavigationMenuContent h5, .NavigationMenuContent h6,
+.NavigationMenuContent p, .NavigationMenuContent span, .NavigationMenuContent div,
+.NavigationMenuContent li, .NavigationMenuContent a,
+.MenubarContent h1, .MenubarContent h2, .MenubarContent h3,
+.MenubarContent h4, .MenubarContent h5, .MenubarContent h6,
+.MenubarContent p, .MenubarContent span, .MenubarContent div,
+.MenubarContent li, .MenubarContent a,
+.DropdownMenuContent h1, .DropdownMenuContent h2, .DropdownMenuContent h3,
+.DropdownMenuContent h4, .DropdownMenuContent h5, .DropdownMenuContent h6,
+.DropdownMenuContent p, .DropdownMenuContent span, .DropdownMenuContent div,
+.DropdownMenuContent li, .DropdownMenuContent a {
+  color: #f8fafc !important; /* slate-50 */
+}
+
+/* Fix muted text colors */
+.NavigationMenuContent .text-gray-300,
+.NavigationMenuContent .text-slate-400,
+.NavigationMenuContent .text-slate-500,
+.NavigationMenuContent .text-muted-foreground,
+.MenubarContent .text-gray-300,
+.MenubarContent .text-slate-400,
+.MenubarContent .text-slate-500,
+.MenubarContent .text-muted-foreground,
+.DropdownMenuContent .text-gray-300,
+.DropdownMenuContent .text-slate-400,
+.DropdownMenuContent .text-slate-500,
+.DropdownMenuContent .text-muted-foreground {
+  color: #cbd5e1 !important; /* slate-300 */
+}
+
+/* Ensure hover states have proper contrast */
+.NavigationMenuContent [class*="hover:bg-slate-100"],
+.MenubarContent [class*="hover:bg-slate-100"],
+.DropdownMenuContent [class*="hover:bg-slate-100"] {
+  @apply hover:bg-slate-700 !important;
+}
+
+/* Fix for dialog content in dark mode */
+.DialogContent,
+[role="dialog"] > div[data-state="open"] {
+  background-color: #1e293b !important; /* slate-800 */
+  color: #f8fafc !important; /* slate-50 */
+  border-color: #334155 !important; /* slate-700 */
+}
+
+/* Fix dialog headers and titles */
+.DialogHeader h2,
+.DialogTitle,
+[role="dialog"] h2,
+[role="dialog"] h3 {
+  color: #f8fafc !important; /* slate-50 */
+  font-weight: 600 !important;
+}
+
+/* Fix dialog descriptions */
+.DialogDescription,
+[role="dialog"] p.text-muted-foreground {
+  color: #cbd5e1 !important; /* slate-300 */
+}
+
+/* Fix for inputs in dark mode */
+.DialogContent input, 
+.DialogContent select, 
+.DialogContent textarea,
+.NavigationMenuContent input, 
+.NavigationMenuContent select, 
+.NavigationMenuContent textarea,
+[role="dialog"] input,
+[role="dialog"] select,
+[role="dialog"] textarea {
+  background-color: #334155 !important; /* slate-700 */
+  color: #f8fafc !important; /* slate-50 */
+  border-color: #475569 !important; /* slate-600 */
+}
+
+/* Fix for radio buttons and checkboxes in dark mode */
+.RadioGroupItem, .CheckboxItem {
+  background-color: transparent !important;
+  border-color: #94a3b8 !important; /* slate-400 */
+}
+
+/* Fix for radio buttons specifically */
+.RadioGroupItem[data-state="checked"] {
+  background-color: #818cf8 !important; /* indigo-400 */
+  border-color: #818cf8 !important; /* indigo-400 */
+}
+
+/* Ensure dropdown items have good contrast in hover state */
+.DropdownMenuItem:hover,
+.MenubarItem:hover,
+.NavigationMenuItem:hover,
+.DropdownMenuSubTrigger:hover,
+.MenubarSubTrigger:hover {
+  background-color: #475569 !important; /* slate-600 */
+  color: #f8fafc !important; /* slate-50 */
+}
+
+/* Fix for form labels in dark mode */
+.DialogContent label,
+.NavigationMenuContent label {
+  color: #f8fafc !important; /* slate-50 */
+}
+
+/* Ensure all dialog and dropdown elements use consistent dark theme - target specific problem elements */
+div[data-radix-popper-content-wrapper] > div,
+[role="dialog"] > div,
+div[data-state="open"],
+.PopoverContent,
+.DropdownMenuContent,
+.NavigationMenuContent,
+.SelectContent,
+.RadioGroupItem,
+.DialogContent,
+.MenubarContent,
+.AlertDialogContent {
+  background-color: #1e293b !important; /* slate-800 */
+  color: #f8fafc !important; /* slate-50 */
+  border-color: #334155 !important; /* slate-700 */
+}
+
+/* Fix for dropdown menus and radio items within algorithm selection dialogs */
+.flex.items-start.space-x-2.p-2.rounded-md.hover\:bg-slate-100,
+.flex.items-start.space-x-2.p-2.rounded-md.hover\:bg-slate-100.dark\:hover\:bg-slate-700,
+.flex.items-start.space-x-2.p-2.rounded-md {
+  color: #f8fafc !important; /* slate-50 */
+}
+
+/* Ensure hover states for all menu items have consistent colors */
+.flex.items-start.space-x-2.p-2.rounded-md:hover,
+.flex.items-start.space-x-2.p-2.rounded-md.hover\:bg-slate-100:hover,
+.flex.items-start.space-x-2.p-2.rounded-md.hover\:bg-slate-100.dark\:hover\:bg-slate-700:hover {
+  background-color: #475569 !important; /* slate-600 */
+  color: #f8fafc !important; /* slate-50 */
+}
+
+/* Ensure radio groups and dialog inputs have consistent contrast */
+.flex.items-start.space-x-2.p-2.rounded-md label,
+.flex.items-start.space-x-2.p-2.rounded-md p,
+.RadioGroup label,
+.RadioGroup p,
+.DialogContent label,
+.DialogContent p,
+div[data-state="open"] label,
+div[data-state="open"] p {
+  color: #f8fafc !important; /* slate-50 */
+}
+
+/* Ensure muted text has sufficient contrast in dark mode */
+.text-xs.text-slate-500,
+.text-xs.text-gray-300,
+.text-xs.text-muted-foreground,
+p.text-xs.text-slate-500.dark\:text-slate-300 {
+  color: #cbd5e1 !important; /* slate-300 */
+}
+
+/* Fix for form labels in dark mode */
+.DialogContent label,
+.NavigationMenuContent label,
+div[data-state="open"] label,
+[role="dialog"] label {
+  color: #f8fafc !important; /* slate-50 */
+}
+
+/* Ensure all dropdown and dialog menus have consistent styling */
+.NavigationMenuContent,
+.MenubarContent,
+.DropdownMenuContent,
+.DialogContent,
+div[data-radix-popper-content-wrapper] > div,
+[role="dialog"] > div,
+div[data-state="open"],
+div[data-radix-menu-content],
+div[data-radix-dropdown-menu-content],
+.PopoverContent,
+.SelectContent,
+.MenuContent {
+  background-color: #1e293b !important; /* slate-800 */
+  color: #f8fafc !important; /* slate-50 */
+  border-color: #334155 !important; /* slate-700 */
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  z-index: 50 !important;
+}
+
+/* Make sure menu and dialog children elements inherit the correct styles */
+.NavigationMenuContent *,
+.MenubarContent *,
+.DropdownMenuContent *,
+.DialogContent *,
+div[data-radix-popper-content-wrapper] > div *,
+[role="dialog"] > div *,
+div[data-state="open"] *,
+div[data-radix-menu-content] *,
+div[data-radix-dropdown-menu-content] *,
+.PopoverContent *,
+.SelectContent *,
+.MenuContent * {
+  color: #f8fafc !important; /* slate-50 for text */
+}
+
+/* Handle muted text in menus */
+.NavigationMenuContent p.text-xs,
+.NavigationMenuContent p.text-muted-foreground,
+.NavigationMenuContent p[class*="text-gray"],
+.NavigationMenuContent p[class*="text-slate"],
+.MenubarContent p.text-xs,
+.DropdownMenuContent p.text-xs,
+div[data-radix-menu-content] p.text-xs,
+div[data-radix-dropdown-menu-content] p.text-xs,
+.DialogContent p.text-xs {
+  color: #94a3b8 !important; /* slate-400 for muted text */
+}
+
+/* Menu hover states should be consistent */
+.NavigationMenuContent a:hover,
+.NavigationMenuContent button:hover,
+.NavigationMenuContent div[role="button"]:hover,
+.MenubarContent a:hover,
+.MenubarContent button:hover,
+.MenubarContent div[role="button"]:hover,
+.DropdownMenuContent a:hover,
+.DropdownMenuContent button:hover,
+.DropdownMenuContent div[role="button"]:hover,
+div[data-radix-menu-content] a:hover,
+div[data-radix-menu-content] button:hover,
+div[data-radix-dropdown-menu-content] a:hover,
+div[data-radix-dropdown-menu-content] button:hover,
+.MenuContent a:hover,
+.MenuContent button:hover,
+.flex.items-start.space-x-2.p-2.rounded-md:hover,
+.flex.items-start.space-x-2.p-2.rounded-md.hover\:bg-slate-100:hover,
+div[class*="hover:bg-slate-100"]:hover {
+  background-color: #475569 !important; /* slate-600 */
+  color: #f8fafc !important; /* slate-50 */
+}
+
+/* Radio and checkbox elements within menus */
+.RadioGroupItem, 
+.CheckboxItem,
+input[type="radio"],
+input[type="checkbox"] {
+  background-color: transparent !important;
+  border-color: #94a3b8 !important; /* slate-400 */
+}
+
+/* Checked states for radio and checkboxes */
+.RadioGroupItem[data-state="checked"],
+input[type="radio"]:checked,
+.CheckboxItem[data-state="checked"],
+input[type="checkbox"]:checked {
+  background-color: #818cf8 !important; /* indigo-400 */
+  border-color: #818cf8 !important; /* indigo-400 */
+}
+
+/* Fix lipsync algorithm selection menu specifically */
+div[class*="lipsync-algorithm"] div,
+div[class*="algorithm-selection"] div,
+div[data-setting="algorithm"] div {
+  background-color: #1e293b !important; /* slate-800 */
+  color: #f8fafc !important; /* slate-50 */
+  border-color: #334155 !important; /* slate-700 */
+}
