@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { toast } from '@/components/ui/use-toast';
 import { getApiUrl } from './apiUtils';
+import { runpodFetch, adaptFetchForRunPod } from './runpodUtils';
 
 // API version path - centralized to ensure consistency
 export const API_VERSION = "/api/v1";
@@ -20,15 +21,9 @@ api.interceptors.request.use((config) => {
   // Get the original URL (before any modifications)
   const originalUrl = config.url || '';
   
-  if (isProduction) {
-    // In production: use getApiUrl for RunPod API integration
-    config.url = getApiUrl(originalUrl);
-  } else {
-    // In development: ensure URL starts with API_VERSION
-    if (!originalUrl.startsWith(API_VERSION)) {
-      config.url = `${API_VERSION}${originalUrl.startsWith('/') ? '' : '/'}${originalUrl}`;
-    }
-  }
+  // Use our unified getApiUrl function to handle URL construction
+  // This ensures consistent handling between direct fetch calls and axios
+  config.url = getApiUrl(originalUrl);
   
   return config;
 });
@@ -95,9 +90,9 @@ export async function uploadFile(
 
   // Use chunked upload for large files
   if (file.size > CHUNK_THRESHOLD) {
-    try {
-      // 1. INIT
-      const initRes = await fetch('/api/v1/upload/init', {
+    try {      // 1. INIT
+      const fetchFunction = isProduction ? runpodFetch : fetch;
+      const initRes = await fetchFunction(getApiUrl('/api/v1/upload/init'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -122,8 +117,7 @@ export async function uploadFile(
         formData.append('upload_id', upload_id);
         formData.append('chunk_index', i.toString());
         formData.append('total_chunks', totalChunks.toString());
-        formData.append('chunk', chunk, file.name);
-        const chunkRes = await fetch('/api/v1/upload/chunk', {
+        formData.append('chunk', chunk, file.name);        const chunkRes = await fetchFunction(getApiUrl('/api/v1/upload/chunk'), {
           method: 'POST',
           body: formData
         });
@@ -135,9 +129,8 @@ export async function uploadFile(
         if (progressCb) {
           progressCb(Math.round((uploaded / file.size) * 100));
         }
-      }
-      // 3. FINALIZE
-      const finalizeRes = await fetch('/api/v1/upload/finalize', {
+      }      // 3. FINALIZE
+      const finalizeRes = await fetchFunction(getApiUrl('/api/v1/upload/finalize'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ upload_id })

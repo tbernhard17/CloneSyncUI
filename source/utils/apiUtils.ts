@@ -31,23 +31,40 @@ export const API_CONFIG = {
  * @returns The complete URL for the endpoint
  */
 export const getApiUrl = (endpoint: string): string => {
-  // Ensure endpoint has leading slash
-  const formattedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
-  
   // Use environment-specific URL construction
   const isLocalDevelopment = window.location.hostname === 'localhost' || 
-                            window.location.hostname === '127.0.0.1';
+                          window.location.hostname === '127.0.0.1';
+  
+  // Normalize the endpoint
+  let normalizedEndpoint = endpoint;
+  
+  // Ensure endpoint has leading slash
+  if (!normalizedEndpoint.startsWith('/')) {
+    normalizedEndpoint = '/' + normalizedEndpoint;
+  }
   
   if (!isLocalDevelopment) {
     // For production: use RunPod API URL
-    // Strip any API prefixes that might conflict with RunPod's routing
-    const cleanEndpoint = formattedEndpoint.replace(/^\/api\/v1/, '');
-    console.log(`Using RunPod API: ${RUNPOD_API_URL}${cleanEndpoint}`);
-    return `${RUNPOD_API_URL}${cleanEndpoint}`;
+    // If the path has /api/v1, remove it to avoid double-prefixing
+    if (normalizedEndpoint.startsWith('/api/v1')) {
+      normalizedEndpoint = normalizedEndpoint.substring('/api/v1'.length);
+      // Make sure it still has a leading slash after removing prefix
+      if (!normalizedEndpoint.startsWith('/')) {
+        normalizedEndpoint = '/' + normalizedEndpoint;
+      }
+    }
+    
+    console.log(`Using RunPod API: ${RUNPOD_API_URL}${normalizedEndpoint}`);
+    return `${RUNPOD_API_URL}${normalizedEndpoint}`;
   } else {
-    // For local development: use relative URL
-    console.log(`Using local API: ${API_CONFIG.fullPath}${formattedEndpoint}`);
-    return `${API_CONFIG.fullPath}${formattedEndpoint}`;
+    // For local development: ensure we have the API prefix
+    // If endpoint doesn't start with API prefix, add it
+    if (!normalizedEndpoint.startsWith('/api/v1')) {
+      normalizedEndpoint = `/api/v1${normalizedEndpoint}`;
+    }
+    
+    console.log(`Using local API: ${normalizedEndpoint}`);
+    return normalizedEndpoint;
   }
 };
 
@@ -66,10 +83,15 @@ export const testRunPodConnection = async (): Promise<boolean> => {
     
     // Create an AbortController for timeout
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
     
-    // Force a direct RunPod API call to verify connection
-    const response = await fetch(`${RUNPOD_API_URL}/health`, {
+    // Use the standardized API URL function to get the right URL
+    const apiUrl = isLocalDevelopment ? `${RUNPOD_API_URL}/health` : getApiUrl('/api/v1/health');
+    
+    console.log(`Testing RunPod API connection to: ${apiUrl}`);
+    
+    // Force a direct RunPod API call to verify connection 
+    const response = await fetch(apiUrl, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

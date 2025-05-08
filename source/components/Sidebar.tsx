@@ -168,9 +168,9 @@ const Sidebar = ({
     setUploadProgress(0);
     
     try {
-      // Use our enhanced uploadFile function for reliability
+      // Use our enhanced uploadFile function with getApiUrl to handle RunPod in production
       const response = await uploadFile(
-        "/upload/video",
+        getApiUrl("/api/v1/upload/video"),
         file,
         (progress) => setUploadProgress(progress)
       );
@@ -217,9 +217,9 @@ const Sidebar = ({
     setVoiceProgress(0);
     
     try {
-      // Use enhanced uploadFile function with explicit voice endpoint
+      // Use enhanced uploadFile function with getApiUrl to handle RunPod in production
       const response = await uploadFile(
-        "/upload/voice",
+        getApiUrl("/api/v1/upload/voice"),
         file,
         (progress) => setVoiceProgress(progress)
       );
@@ -263,7 +263,7 @@ const Sidebar = ({
     
     try {
       const response = await uploadFile(
-        "/api/v1/upload/audio",
+        getApiUrl("/api/v1/upload/audio"),
         file,
         (progress) => setAudioProgress(progress)
       );
